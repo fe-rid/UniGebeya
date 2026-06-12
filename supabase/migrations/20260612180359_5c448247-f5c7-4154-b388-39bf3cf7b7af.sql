@@ -1,0 +1,3 @@
+INSERT INTO public.profiles (user_id, name, email) VALUES ('2b0bf1ce-9ed8-413c-9aea-2234cc2fb4f7', 'Demo Runner', 'runner@uni.edu') ON CONFLICT (user_id) DO NOTHING;
+INSERT INTO public.user_roles (user_id, role) VALUES ('2b0bf1ce-9ed8-413c-9aea-2234cc2fb4f7', 'runner') ON CONFLICT DO NOTHING;
+UPDATE public.user_roles SET role = 'student' WHERE user_id = 'c4fc61e8-9100-4d71-9628-1817b3be8cbe';

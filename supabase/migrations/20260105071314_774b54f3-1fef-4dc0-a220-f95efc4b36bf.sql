@@ -1,5 +1,5 @@
 -- Create enum for user roles
-CREATE TYPE public.app_role AS ENUM ('student', 'runner', 'shopkeeper');
+CREATE TYPE public.app_role AS ENUM ('student', 'runner', 'shopkeeper', 'admin');
 
 -- Create profiles table
 CREATE TABLE public.profiles (

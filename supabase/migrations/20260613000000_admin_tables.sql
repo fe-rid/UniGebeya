@@ -4,6 +4,9 @@
 --          platform_settings, and adds is_suspended to profiles
 -- ============================================================
 
+-- ─── 0. Add admin to app_role enum ─────────────────────────
+ALTER TYPE public.app_role ADD VALUE IF NOT EXISTS 'admin';
+
 -- ─── 1. Add is_suspended column to profiles ─────────────────
 ALTER TABLE public.profiles
   ADD COLUMN IF NOT EXISTS is_suspended boolean NOT NULL DEFAULT false;

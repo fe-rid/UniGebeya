@@ -136,9 +136,12 @@ export default function AuthPage() {
         }
 
         await register(formData.name, formData.email, formData.password, selectedRole, formData.phone, formData.university);
+        
+        // Force log the user in immediately after registering
+        await login(formData.email, formData.password);
+        
         toast.success('Account created successfully!');
       }
-      // Navigation happens automatically via AuthContext effect
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Something went wrong');
     } finally {

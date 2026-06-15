@@ -93,9 +93,7 @@ function AppRoutes() {
       {/* Shop Routes */}
       <Route path="/shop" element={<ProtectedRoute allowedRoles={['shopkeeper']}><ShopDashboard /></ProtectedRoute>} />
       <Route path="/shop/onboarding" element={<ProtectedRoute allowedRoles={['shopkeeper']}><ShopOnboarding /></ProtectedRoute>} />
-      <Route path="/shop/products" element={<ProtectedRoute allowedRoles={['shopkeeper']}><ShopProducts /></ProtectedRoute>} />
-      <Route path="/shop/orders" element={<ProtectedRoute allowedRoles={['shopkeeper']}><ShopOrders /></ProtectedRoute>} />
-      <Route path="/shop/profile" element={<ProtectedRoute allowedRoles={['shopkeeper']}><ShopProfile /></ProtectedRoute>} />
+      <Route path="/shop/:subpage" element={<ProtectedRoute allowedRoles={['shopkeeper']}><ShopDashboard /></ProtectedRoute>} />
 
       {/* Admin Routes */}
       <Route path="/admin" element={<AdminDashboard />} />
@@ -110,8 +108,9 @@ import { useLocation } from 'react-router-dom';
 function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
+  const isShop = location.pathname.startsWith('/shop');
 
-  if (isAdmin) {
+  if (isAdmin || isShop) {
     return <div className="min-h-screen bg-background flex flex-col w-full">{children}</div>;
   }
 

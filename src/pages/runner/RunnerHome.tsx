@@ -164,7 +164,7 @@ export default function RunnerHome() {
           shop:shops(id, name, location),
           order_items(id, product_name, quantity)
         `)
-        .eq('status', 'accepted')
+        .in('status', ['accepted', 'ready'])
         .is('runner_id', null)
         .order('created_at', { ascending: false });
       
@@ -208,8 +208,7 @@ export default function RunnerHome() {
       const { error } = await supabase
         .from('orders')
         .update({ 
-          runner_id: session.session.user.id,
-          status: 'accepted'
+          runner_id: session.session.user.id
         })
         .eq('id', orderId);
       

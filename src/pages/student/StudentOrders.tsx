@@ -38,6 +38,8 @@ interface Order {
 const statusColors: Record<string, string> = {
   pending: 'bg-warning/10 text-warning',
   accepted: 'bg-primary/10 text-primary',
+  preparing: 'bg-accent/10 text-accent',
+  ready: 'bg-success/10 text-success',
   picked_up: 'bg-runner/10 text-runner',
   on_the_way: 'bg-runner/10 text-runner',
   delivered: 'bg-success/10 text-success',
@@ -47,6 +49,8 @@ const statusColors: Record<string, string> = {
 const statusLabels: Record<string, string> = {
   pending: 'Pending',
   accepted: 'Accepted',
+  preparing: 'Preparing',
+  ready: 'Ready for Pickup',
   picked_up: 'Picked Up',
   on_the_way: 'On the Way',
   delivered: 'Delivered',
@@ -156,12 +160,14 @@ export default function StudentOrders() {
 
   const getProgressWidth = (status: string) => {
     switch (status) {
-      case 'pending': return '10%';
-      case 'accepted': return '30%';
-      case 'picked_up': return '55%';
-      case 'on_the_way': return '80%';
+      case 'pending': return '8%';
+      case 'accepted': return '25%';
+      case 'preparing': return '40%';
+      case 'ready': return '55%';
+      case 'picked_up': return '70%';
+      case 'on_the_way': return '85%';
       case 'delivered': return '100%';
-      default: return '0%';
+      default: return '5%';
     }
   };
 
@@ -226,11 +232,24 @@ export default function StudentOrders() {
 
                   {/* Progress Bar */}
                   <div>
-                    <div className="flex justify-between text-xs text-muted-foreground mb-2">
-                      <span>Placed</span>
-                      <span>Accepted</span>
-                      <span>Picked Up</span>
-                      <span>Delivered</span>
+                    <div className="flex justify-between text-xs mb-2">
+                      {[
+                        { label: 'Placed', statuses: ['pending'] },
+                        { label: 'Preparing', statuses: ['accepted', 'preparing'] },
+                        { label: 'Picked Up', statuses: ['ready', 'picked_up', 'on_the_way'] },
+                        { label: 'Delivered', statuses: ['delivered'] },
+                      ].map((step) => (
+                        <span
+                          key={step.label}
+                          className={
+                            step.statuses.includes(order.status)
+                              ? 'text-primary font-semibold'
+                              : 'text-muted-foreground'
+                          }
+                        >
+                          {step.label}
+                        </span>
+                      ))}
                     </div>
                     <div className="h-2 bg-muted rounded-full overflow-hidden">
                       <motion.div

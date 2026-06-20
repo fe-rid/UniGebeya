@@ -2,7 +2,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { ShieldAlert, Loader2 } from "lucide-react";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import { useOrderNotifications } from "./hooks/useOrderNotifications";
@@ -41,6 +43,39 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 
 const queryClient = new QueryClient();
 
+function AccessDenied({ user }: { user: any }) {
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const redirect = user.role === 'student' 
+        ? '/student' 
+        : user.role === 'runner' 
+        ? '/runner' 
+        : user.role === 'shopkeeper' 
+        ? '/shop' 
+        : user.role === 'admin'
+        ? '/admin'
+        : '/';
+      navigate(redirect, { replace: true });
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [user, navigate]);
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-background">
+      <div className="w-16 h-16 rounded-full bg-destructive/10 text-destructive flex items-center justify-center mb-4">
+        <ShieldAlert className="w-8 h-8" />
+      </div>
+      <h1 className="text-2xl font-bold text-foreground mb-2">Access Denied</h1>
+      <p className="text-muted-foreground text-sm max-w-xs mb-6">
+        You do not have permission to access this page. Redirecting to your dashboard...
+      </p>
+      <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+    </div>
+  );
+}
+
 function ProtectedRoute({ children, allowedRoles }: { children: React.ReactNode; allowedRoles: string[] }) {
   const { user, isLoading } = useAuth();
 
@@ -53,8 +88,7 @@ function ProtectedRoute({ children, allowedRoles }: { children: React.ReactNode;
   }
 
   if (!allowedRoles.includes(user.role)) {
-    const redirect = user.role === 'student' ? '/student' : user.role === 'runner' ? '/runner' : '/shop';
-    return <Navigate to={redirect} replace />;
+    return <AccessDenied user={user} />;
   }
 
   return <>{children}</>;
@@ -96,7 +130,7 @@ function AppRoutes() {
       <Route path="/shop/:subpage" element={<ProtectedRoute allowedRoles={['shopkeeper']}><ShopDashboard /></ProtectedRoute>} />
 
       {/* Admin Routes */}
-      <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>

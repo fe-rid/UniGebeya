@@ -45,21 +45,18 @@ const menuItemsByRole = {
     { label: 'Profile', path: '/student/profile', icon: User },
     { label: 'Help & Support', path: '/student/help', icon: HelpCircle },
     { label: 'Settings', path: '/student/settings', icon: Settings },
-    { label: 'Admin Panel 🔑', path: '/admin', icon: Shield },
   ],
   runner: [
     { label: 'Available Jobs', path: '/runner', icon: Compass },
     { label: 'Active Tasks', path: '/runner/active', icon: Bike },
     { label: 'Earnings', path: '/runner/earnings', icon: DollarSign },
     { label: 'Profile', path: '/runner/profile', icon: User },
-    { label: 'Admin Panel 🔑', path: '/admin', icon: Shield },
   ],
   shopkeeper: [
     { label: 'Dashboard', path: '/shop', icon: BarChart3 },
     { label: 'Products', path: '/shop/products', icon: Coffee },
     { label: 'Orders', path: '/shop/orders', icon: ClipboardList },
     { label: 'Profile', path: '/shop/profile', icon: Store },
-    { label: 'Admin Panel 🔑', path: '/admin', icon: Shield },
   ],
 };
 

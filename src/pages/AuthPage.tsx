@@ -149,10 +149,6 @@ export default function AuthPage() {
     }
   };
 
-  const handleRoleContinue = () => {
-    setMode('register');
-  };
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -205,7 +201,7 @@ export default function AuthPage() {
               <div className="text-center mb-8">
                 <h2 className="text-xl font-bold">Choose Your Role</h2>
                 <p className="text-muted-foreground text-sm mt-1">
-                  How will you use Uni Gebeya?
+                  How will you use UniGebeya?
                 </p>
               </div>
 
@@ -247,7 +243,7 @@ export default function AuthPage() {
               <Button
                 variant="gradient"
                 size="lg"
-                onClick={handleRoleContinue}
+                onClick={() => setMode('register')}
                 className="w-full mt-6"
               >
                 Continue
@@ -255,7 +251,7 @@ export default function AuthPage() {
             </motion.div>
           ) : (
             <motion.form
-              key="form"
+              key={mode}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
@@ -365,45 +361,7 @@ export default function AuthPage() {
                 {isLoading ? 'Please wait...' : mode === 'login' ? 'Sign In' : 'Create Account'}
               </Button>
 
-              {mode === 'login' && (
-                <div className="space-y-4 pt-4">
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background px-2 text-muted-foreground">Demo Accounts</span>
-                    </div>
-                  </div>
 
-                  <div className="grid grid-cols-3 gap-2 text-xs">
-                    {[
-                      { email: 'student@uni.edu', label: 'Student' },
-                      { email: 'runner@uni.edu', label: 'Runner' },
-                      { email: 'shop@uni.edu', label: 'Shop' },
-                    ].map((demo) => (
-                      <button
-                        key={demo.email}
-                        type="button"
-                        onClick={() => setFormData({ ...formData, email: demo.email, password: 'demo123' })}
-                        className="p-2 rounded-xl border hover:bg-muted transition-colors text-center"
-                      >
-                        <p className="font-medium">{demo.label}</p>
-                        <p className="text-muted-foreground truncate">{demo.email}</p>
-                      </button>
-                    ))}
-                  </div>
-
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full border-amber-500/30 hover:bg-amber-500/5 text-amber-600 dark:text-amber-400 h-12 rounded-xl flex items-center justify-center gap-2 font-semibold"
-                    onClick={() => navigate('/admin')}
-                  >
-                    <Shield className="w-4 h-4 text-amber-500" /> Continue as Admin
-                  </Button>
-                </div>
-              )}
 
               <p className="text-center text-sm text-muted-foreground">
                 {mode === 'login' ? (

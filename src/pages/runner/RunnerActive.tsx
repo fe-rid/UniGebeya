@@ -66,7 +66,7 @@ export default function RunnerActive() {
           order_items(id, product_name, quantity, unit_price)
         `)
         .eq('runner_id', session.session.user.id)
-        .in('status', ['accepted', 'picked_up', 'on_the_way'])
+        .in('status', ['accepted', 'preparing', 'ready', 'picked_up', 'on_the_way'])
         .order('created_at', { ascending: false });
       
       if (error) throw error;
@@ -164,7 +164,7 @@ export default function RunnerActive() {
 
   const getStepIndex = (order: ActiveOrder) => {
     const arrived = arrivedOrders[order.id];
-    if (order.status === 'accepted') {
+    if (['accepted', 'preparing', 'ready'].includes(order.status)) {
       return arrived ? 1 : 0;
     }
     if (order.status === 'picked_up') return 2;
@@ -177,7 +177,7 @@ export default function RunnerActive() {
     const arrived = arrivedOrders[order.id];
     const stepIndex = getStepIndex(order);
 
-    if (order.status === 'accepted') {
+    if (['accepted', 'preparing', 'ready'].includes(order.status)) {
       if (!arrived) {
         return (
           <Button

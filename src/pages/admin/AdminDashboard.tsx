@@ -28,11 +28,14 @@ import {
   FileText,
   Database,
   RefreshCw,
-  PlusCircle
+  PlusCircle,
+  LogOut
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
@@ -74,7 +77,19 @@ type TabType =
 const zoneIcons = ['📍', '🏢', '🏫', ' Dorm', '🛏️'];
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success('Logged out successfully');
+      navigate('/auth', { replace: true });
+    } catch (e) {
+      toast.error('Failed to log out');
+    }
+  };
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<'all' | 'student' | 'runner' | 'shopkeeper'>('all');
   const [orderFilter, setOrderFilter] = useState<'all' | 'pending' | 'accepted' | 'preparing' | 'ready' | 'picked' | 'on_the_way' | 'delivered' | 'cancelled'>('all');
@@ -126,7 +141,7 @@ export default function AdminDashboard() {
     }
   });
 
-  // 3. Fetch REAL users: join profiles with user_roles
+  // 3. Fetch REAL users directly from profiles
   const { data: realUsersRaw = [], isLoading: usersLoading } = useQuery({
     queryKey: ['admin-real-users'],
     queryFn: async () => {
@@ -134,20 +149,10 @@ export default function AdminDashboard() {
         // Fetch profiles
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
-          .select('id, user_id, name, email, phone, university, location, is_verified, avatar, created_at');
+          .select('id, user_id, name, email, phone, university, location, is_verified, avatar, created_at, role');
         if (profilesError) throw profilesError;
 
-        // Fetch user_roles
-        const { data: userRoles, error: rolesError } = await supabase
-          .from('user_roles')
-          .select('user_id, role');
-        if (rolesError) throw rolesError;
-
-        // Build a role map: user_id -> role
-        const roleMap: Record<string, string> = {};
-        (userRoles || []).forEach((r: any) => { roleMap[r.user_id] = r.role; });
-
-        // Merge profiles with roles
+        // Map profiles directly
         return (profiles || []).map((p: any) => ({
           id: p.user_id,
           profileId: p.id,
@@ -159,7 +164,7 @@ export default function AdminDashboard() {
           isVerified: p.is_verified || false,
           avatar: p.avatar,
           created_at: p.created_at,
-          role: roleMap[p.user_id] || 'student',
+          role: p.role || 'student',
           status: 'active', // Default; updated locally for suspension
           earnings: 0,
           deliveries: 0,
@@ -328,6 +333,32 @@ export default function AdminDashboard() {
     setLocalUsers(prev => prev.map(u => u.id === userId ? { ...u, status: 'active', isVerified: true } : u));
     toast.success(`Approved ${user.name}`);
     await writeAuditLog('Approve User', `Approved runner/shopkeeper ${user.name}.`);
+  };
+
+  const handleUpdateUserRole = async (userId: string, newRole: string) => {
+    try {
+      // 1. Update user_roles table
+      const { error: rolesError } = await supabase
+        .from('user_roles')
+        .update({ role: newRole })
+        .eq('user_id', userId);
+
+      // 2. Update profiles table
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ role: newRole })
+        .eq('user_id', userId);
+
+      if (profileError || rolesError) {
+        throw new Error(profileError?.message || rolesError?.message);
+      }
+
+      setLocalUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));
+      toast.success(`Role updated successfully to ${newRole}`);
+      await writeAuditLog('Update User Role', `User ${userId} role changed to ${newRole}.`);
+    } catch (e: any) {
+      toast.error('Failed to update role: ' + e.message);
+    }
   };
 
   // ─── 4. Promo operations (Supabase) ─────────────────────
@@ -615,33 +646,20 @@ export default function AdminDashboard() {
           })}
         </nav>
 
-        {/* Development Mode Badge */}
-        <div className="p-4 border-t border-border bg-secondary/50">
-          <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 flex items-center gap-2">
-            <Shield className="w-4 h-4 text-primary shrink-0" />
-            <div className="min-w-0">
-              <p className="text-xs font-bold text-primary truncate">Development Mode</p>
-              <p className="text-[9px] text-muted-foreground truncate">Admin Access Enabled</p>
-            </div>
-          </div>
+        {/* Log Out Button */}
+        <div className="p-4 border-t border-border">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-200 text-destructive hover:bg-destructive/10"
+          >
+            <LogOut className="w-5 h-5" />
+            <span>Log Out</span>
+          </button>
         </div>
       </aside>
-
+ 
       {/* Main Content Area */}
       <main className="flex-1 bg-background overflow-y-auto p-4 md:p-8 min-w-0">
-        {/* Development Banner */}
-        <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-amber-500 shrink-0" />
-            <div>
-              <p className="text-sm font-bold text-amber-600 dark:text-amber-400">Development Mode – Admin Access</p>
-              <p className="text-xs text-muted-foreground">Direct bypass active. No authentication required during development.</p>
-            </div>
-          </div>
-          <span className="text-[10px] bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
-            Bypass Active
-          </span>
-        </div>
 
         {/* Header toolbar */}
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
@@ -840,14 +858,22 @@ export default function AdminDashboard() {
                             </div>
                           </td>
                           <td className="p-4">
-                            <span className={cn(
-                              'px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase',
-                              user.role === 'student' && 'bg-primary/10 text-primary',
-                              user.role === 'runner' && 'bg-indigo-500/10 text-indigo-500',
-                              user.role === 'shopkeeper' && 'bg-emerald-500/10 text-emerald-500'
-                            )}>
-                              {user.role}
-                            </span>
+                            <select
+                              value={user.role}
+                              onChange={(e) => handleUpdateUserRole(user.id, e.target.value)}
+                              className={cn(
+                                'text-[11px] font-bold uppercase rounded-xl border bg-card p-1.5 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer',
+                                user.role === 'student' && 'text-primary border-primary/20 bg-primary/5',
+                                user.role === 'runner' && 'text-indigo-500 border-indigo-500/20 bg-indigo-500/5',
+                                user.role === 'shopkeeper' && 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5',
+                                user.role === 'admin' && 'text-amber-500 border-amber-500/20 bg-amber-500/5'
+                              )}
+                            >
+                              <option value="student">Student</option>
+                              <option value="runner">Runner</option>
+                              <option value="shopkeeper">Shopkeeper</option>
+                              <option value="admin">Admin</option>
+                            </select>
                           </td>
                           <td className="p-4">
                             {user.isVerified ? (

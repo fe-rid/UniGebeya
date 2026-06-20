@@ -34,23 +34,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return null;
       }
 
-      const { data: roleRow, error: roleError } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', userId)
-        .maybeSingle();
-
-      if (roleError) {
-        console.error('Error fetching role:', roleError);
-      }
-
       if (profile) {
         const appUser: User = {
           id: profile.user_id,
           name: profile.name,
           email: profile.email,
           phone: profile.phone || '',
-          role: (roleRow?.role as UserRole) || 'student',
+          role: (profile.role as UserRole) || 'student',
           location: profile.location || '',
           avatar: profile.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.name}`,
           isVerified: profile.is_verified || false,

@@ -98,7 +98,7 @@ BEGIN
 END;
 $$;
 
--- 5) Update has_role helper function to check profiles.role instead of user_roles
+-- 5) Keep has_role helper function checking user_roles to avoid RLS recursion on profiles
 CREATE OR REPLACE FUNCTION public.has_role(_user_id uuid, _role app_role)
 RETURNS boolean
 LANGUAGE sql
@@ -108,8 +108,31 @@ SET search_path = public
 AS $$
   SELECT EXISTS (
     SELECT 1
-    FROM public.profiles
+    FROM public.user_roles
     WHERE user_id = _user_id
       AND role = _role
   )
 $$;
+
+-- 6) Create function and trigger to sync profiles.role to auth.users.raw_user_meta_data
+CREATE OR REPLACE FUNCTION public.sync_user_metadata_role()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = auth, public
+AS $$
+BEGIN
+  IF (TG_OP = 'INSERT') OR NEW.role IS DISTINCT FROM OLD.role THEN
+    UPDATE auth.users
+    SET raw_user_meta_data = COALESCE(raw_user_meta_data, '{}'::jsonb) || jsonb_build_object('role', NEW.role::text)
+    WHERE id = NEW.user_id;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS sync_user_metadata_role_trg ON public.profiles;
+CREATE TRIGGER sync_user_metadata_role_trg
+AFTER INSERT OR UPDATE ON public.profiles
+FOR EACH ROW
+EXECUTE FUNCTION public.sync_user_metadata_role();

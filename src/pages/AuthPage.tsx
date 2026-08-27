@@ -150,247 +150,253 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <motion.header
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="flex items-center gap-4 p-4"
-      >
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => {
-            if (mode === 'register') {
-              setMode('role');
-            } else if (mode === 'role') {
-              setMode('login');
-            } else {
-              navigate('/');
-            }
-          }}
-          className="rounded-xl"
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-orange-100/90 via-amber-50/80 to-rose-100/70 dark:from-slate-950 dark:via-slate-900 dark:to-orange-950/40 flex flex-col justify-center items-center py-8 px-4">
+      {/* Decorative Warm Sunset Ambient Glows */}
+      <div className="absolute -top-24 -left-20 w-96 h-96 bg-gradient-to-br from-orange-400/35 via-amber-400/30 to-transparent rounded-full blur-3xl pointer-events-none animate-pulse-soft" />
+      <div className="absolute -bottom-24 -right-20 w-96 h-96 bg-gradient-to-tr from-rose-400/30 via-orange-300/25 to-amber-400/35 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-orange-300/15 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Main Glass Card Container */}
+      <div className="relative w-full max-w-md bg-white/85 dark:bg-slate-900/85 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-2xl rounded-3xl p-6 sm:p-8">
+        {/* Header Back Button */}
+        <motion.header
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="flex items-center justify-between mb-4"
         >
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-      </motion.header>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              if (mode === 'register') {
+                setMode('role');
+              } else if (mode === 'role') {
+                setMode('login');
+              } else {
+                navigate('/');
+              }
+            }}
+            className="rounded-xl hover:bg-orange-100/50 dark:hover:bg-slate-800"
+          >
+            <ArrowLeft className="w-5 h-5 text-foreground" />
+          </Button>
+        </motion.header>
 
-      <div className="px-6 pb-8">
-        {/* Logo */}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="flex flex-col items-center mb-8"
-        >
-          <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center mb-4">
-            <Package className="w-8 h-8 text-primary-foreground" />
-          </div>
-          <h1 className="text-2xl font-bold">Uni Gebeya</h1>
-        </motion.div>
+        <div>
+          {/* Logo */}
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            className="flex flex-col items-center mb-6"
+          >
+            <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center mb-3 shadow-lg shadow-orange-500/30">
+              <Package className="w-8 h-8 text-primary-foreground" />
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Uni Gebeya</h1>
+          </motion.div>
 
-        <AnimatePresence mode="wait">
-          {mode === 'role' ? (
-            <motion.div
-              key="role"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-6"
-            >
-              <div className="text-center mb-8">
-                <h2 className="text-xl font-bold">Choose Your Role</h2>
-                <p className="text-muted-foreground text-sm mt-1">
-                  How will you use UniGebeya?
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                {roles.map((role) => {
-                  const Icon = role.icon;
-                  return (
-                    <motion.button
-                      key={role.id}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => setSelectedRole(role.id)}
-                      className={cn(
-                        "w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-200",
-                        selectedRole === role.id
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:border-primary/50"
-                      )}
-                    >
-                      <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center text-primary-foreground", role.gradient)}>
-                        <Icon className="w-6 h-6" />
-                      </div>
-                      <div className="text-left">
-                        <p className="font-semibold">{role.label}</p>
-                        <p className="text-sm text-muted-foreground">{role.description}</p>
-                      </div>
-                      {selectedRole === role.id && (
-                        <motion.div
-                          layoutId="roleCheck"
-                          className="ml-auto w-6 h-6 rounded-full gradient-primary flex items-center justify-center"
-                        >
-                          <div className="w-2 h-2 rounded-full bg-primary-foreground" />
-                        </motion.div>
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </div>
-
-              <Button
-                variant="gradient"
-                size="lg"
-                onClick={() => setMode('register')}
-                className="w-full mt-6"
+          <AnimatePresence mode="wait">
+            {mode === 'role' ? (
+              <motion.div
+                key="role"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-6"
               >
-                Continue
-              </Button>
-            </motion.div>
-          ) : (
-            <motion.form
-              key={mode}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              onSubmit={handleSubmit}
-              className="space-y-6"
-            >
-              <div className="text-center mb-8">
-                <h2 className="text-xl font-bold">
-                  {mode === 'login' ? 'Welcome Back' : 'Create Account'}
-                </h2>
-                <p className="text-muted-foreground text-sm mt-1">
-                  {mode === 'login' 
-                    ? 'Sign in to continue' 
-                    : `Sign up as a ${selectedRole}`}
-                </p>
-              </div>
+                <div className="text-center mb-6">
+                  <h2 className="text-xl font-bold">Choose Your Role</h2>
+                  <p className="text-muted-foreground text-sm mt-1">
+                    How will you use UniGebeya?
+                  </p>
+                </div>
 
-              <div className="space-y-4">
-                {mode === 'register' && (
-                  <>
-                    <div className="relative">
-                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                      <Input
-                        type="text"
-                        placeholder="Full Name"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value.slice(0, 100) })}
-                        className="pl-12 h-14 rounded-xl"
-                        required
-                        maxLength={100}
-                      />
-                    </div>
-
-                    <div className="relative">
-                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                      <Input
-                        type="tel"
-                        placeholder="Phone Number"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value.slice(0, 15) })}
-                        className="pl-12 h-14 rounded-xl"
-                        required
-                        maxLength={15}
-                      />
-                    </div>
-
-                    <div className="relative">
-                      <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground z-10 pointer-events-none" />
-                      <Select
-                        value={formData.university}
-                        onValueChange={(value) => setFormData({ ...formData, university: value })}
+                <div className="space-y-3">
+                  {roles.map((role) => {
+                    const Icon = role.icon;
+                    return (
+                      <motion.button
+                        key={role.id}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setSelectedRole(role.id)}
+                        className={cn(
+                          "w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-200 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm",
+                          selectedRole === role.id
+                            ? "border-primary bg-primary/5 shadow-md"
+                            : "border-border/70 hover:border-primary/50"
+                        )}
                       >
-                        <SelectTrigger className="pl-12 h-14 rounded-xl">
-                          <SelectValue placeholder="Select University" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {universities.map((uni) => (
-                            <SelectItem key={uni} value={uni}>
-                              {uni}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </>
-                )}
-
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <Input
-                    type="email"
-                    placeholder="Email Address"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="pl-12 h-14 rounded-xl"
-                    required
-                  />
+                        <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center text-primary-foreground shadow-sm", role.gradient)}>
+                          <Icon className="w-6 h-6" />
+                        </div>
+                        <div className="text-left">
+                          <p className="font-semibold">{role.label}</p>
+                          <p className="text-sm text-muted-foreground">{role.description}</p>
+                        </div>
+                        {selectedRole === role.id && (
+                          <motion.div
+                            layoutId="roleCheck"
+                            className="ml-auto w-6 h-6 rounded-full gradient-primary flex items-center justify-center shadow-sm"
+                          >
+                            <div className="w-2 h-2 rounded-full bg-primary-foreground" />
+                          </motion.div>
+                        )}
+                      </motion.button>
+                    );
+                  })}
                 </div>
 
-                <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <Input
-                    type="password"
-                    placeholder="Password"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="pl-12 h-14 rounded-xl"
-                    required
-                    minLength={6}
-                  />
-                </div>
-              </div>
-
-              {mode === 'login' && (
-                <button type="button" className="text-sm text-primary font-medium">
-                  Forgot Password?
-                </button>
-              )}
-
-              <Button
-                type="submit"
-                variant="gradient"
-                size="lg"
-                disabled={isLoading}
-                className="w-full"
+                <Button
+                  variant="gradient"
+                  size="lg"
+                  onClick={() => setMode('register')}
+                  className="w-full mt-6 shadow-lg shadow-orange-500/25"
+                >
+                  Continue
+                </Button>
+              </motion.div>
+            ) : (
+              <motion.form
+                key={mode}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                onSubmit={handleSubmit}
+                className="space-y-6"
               >
-                {isLoading ? 'Please wait...' : mode === 'login' ? 'Sign In' : 'Create Account'}
-              </Button>
+                <div className="text-center mb-6">
+                  <h2 className="text-xl font-bold">
+                    {mode === 'login' ? 'Welcome Back' : 'Create Account'}
+                  </h2>
+                  <p className="text-muted-foreground text-sm mt-1">
+                    {mode === 'login' 
+                      ? 'Sign in to continue' 
+                      : `Sign up as a ${selectedRole}`}
+                  </p>
+                </div>
 
+                <div className="space-y-4">
+                  {mode === 'register' && (
+                    <>
+                      <div className="relative">
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                        <Input
+                          type="text"
+                          placeholder="Full Name"
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value.slice(0, 100) })}
+                          className="pl-12 h-14 rounded-xl bg-white/70 dark:bg-slate-800/70 border-orange-100 dark:border-slate-700"
+                          required
+                          maxLength={100}
+                        />
+                      </div>
 
+                      <div className="relative">
+                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                        <Input
+                          type="tel"
+                          placeholder="Phone Number"
+                          value={formData.phone}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value.slice(0, 15) })}
+                          className="pl-12 h-14 rounded-xl bg-white/70 dark:bg-slate-800/70 border-orange-100 dark:border-slate-700"
+                          required
+                          maxLength={15}
+                        />
+                      </div>
 
-              <p className="text-center text-sm text-muted-foreground">
-                {mode === 'login' ? (
-                  <>
-                    Don't have an account?{' '}
-                    <button
-                      type="button"
-                      onClick={() => setMode('role')}
-                      className="text-primary font-semibold"
-                    >
-                      Sign Up
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    Already have an account?{' '}
-                    <button
-                      type="button"
-                      onClick={() => setMode('login')}
-                      className="text-primary font-semibold"
-                    >
-                      Sign In
-                    </button>
-                  </>
+                      <div className="relative">
+                        <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground z-10 pointer-events-none" />
+                        <Select
+                          value={formData.university}
+                          onValueChange={(value) => setFormData({ ...formData, university: value })}
+                        >
+                          <SelectTrigger className="pl-12 h-14 rounded-xl bg-white/70 dark:bg-slate-800/70 border-orange-100 dark:border-slate-700">
+                            <SelectValue placeholder="Select University" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {universities.map((uni) => (
+                              <SelectItem key={uni} value={uni}>
+                                {uni}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </>
+                  )}
+
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      type="email"
+                      placeholder="Email Address"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="pl-12 h-14 rounded-xl bg-white/70 dark:bg-slate-800/70 border-orange-100 dark:border-slate-700"
+                      required
+                    />
+                  </div>
+
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      type="password"
+                      placeholder="Password"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      className="pl-12 h-14 rounded-xl bg-white/70 dark:bg-slate-800/70 border-orange-100 dark:border-slate-700"
+                      required
+                      minLength={6}
+                    />
+                  </div>
+                </div>
+
+                {mode === 'login' && (
+                  <button type="button" className="text-sm text-primary font-medium hover:underline">
+                    Forgot Password?
+                  </button>
                 )}
-              </p>
-            </motion.form>
-          )}
-        </AnimatePresence>
+
+                <Button
+                  type="submit"
+                  variant="gradient"
+                  size="lg"
+                  disabled={isLoading}
+                  className="w-full shadow-lg shadow-orange-500/25"
+                >
+                  {isLoading ? 'Please wait...' : mode === 'login' ? 'Sign In' : 'Create Account'}
+                </Button>
+
+                <p className="text-center text-sm text-muted-foreground">
+                  {mode === 'login' ? (
+                    <>
+                      Don't have an account?{' '}
+                      <button
+                        type="button"
+                        onClick={() => setMode('role')}
+                        className="text-primary font-semibold hover:underline"
+                      >
+                        Sign Up
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      Already have an account?{' '}
+                      <button
+                        type="button"
+                        onClick={() => setMode('login')}
+                        className="text-primary font-semibold hover:underline"
+                      >
+                        Sign In
+                      </button>
+                    </>
+                  )}
+                </p>
+              </motion.form>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );

@@ -150,14 +150,9 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-orange-100/90 via-amber-50/80 to-rose-100/70 dark:from-slate-950 dark:via-slate-900 dark:to-orange-950/40 flex flex-col justify-center items-center py-8 px-4">
-      {/* Decorative Warm Sunset Ambient Glows */}
-      <div className="absolute -top-24 -left-20 w-96 h-96 bg-gradient-to-br from-orange-400/35 via-amber-400/30 to-transparent rounded-full blur-3xl pointer-events-none animate-pulse-soft" />
-      <div className="absolute -bottom-24 -right-20 w-96 h-96 bg-gradient-to-tr from-rose-400/30 via-orange-300/25 to-amber-400/35 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-orange-300/15 rounded-full blur-3xl pointer-events-none" />
-
-      {/* Main Glass Card Container */}
-      <div className="relative w-full max-w-md bg-white/85 dark:bg-slate-900/85 backdrop-blur-2xl border border-white/80 dark:border-white/10 shadow-2xl rounded-3xl p-6 sm:p-8">
+    <div className="min-h-screen bg-slate-100/80 flex flex-col justify-center items-center py-8 px-4">
+      {/* Main Form Card Container */}
+      <div className="w-full max-w-md bg-white border border-slate-200 shadow-xl rounded-3xl p-6 sm:p-8">
         {/* Header Back Button */}
         <motion.header
           initial={{ y: -10, opacity: 0 }}
@@ -176,9 +171,9 @@ export default function AuthPage() {
                 navigate('/');
               }
             }}
-            className="rounded-xl hover:bg-orange-100/50 dark:hover:bg-slate-800"
+            className="rounded-xl hover:bg-slate-100 text-slate-700"
           >
-            <ArrowLeft className="w-5 h-5 text-foreground" />
+            <ArrowLeft className="w-5 h-5" />
           </Button>
         </motion.header>
 
@@ -190,10 +185,10 @@ export default function AuthPage() {
             transition={{ delay: 0.1 }}
             className="flex flex-col items-center mb-6"
           >
-            <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center mb-3 shadow-lg shadow-orange-500/30">
-              <Package className="w-8 h-8 text-primary-foreground" />
+            <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center mb-3 shadow-md shadow-orange-500/20">
+              <Package className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">Uni Gebeya</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">Uni Gebeya</h1>
           </motion.div>
 
           <AnimatePresence mode="wait">
@@ -206,8 +201,8 @@ export default function AuthPage() {
                 className="space-y-6"
               >
                 <div className="text-center mb-6">
-                  <h2 className="text-xl font-bold">Choose Your Role</h2>
-                  <p className="text-muted-foreground text-sm mt-1">
+                  <h2 className="text-xl font-bold text-slate-900">Choose Your Role</h2>
+                  <p className="text-slate-500 text-sm mt-1">
                     How will you use UniGebeya?
                   </p>
                 </div>
@@ -221,25 +216,25 @@ export default function AuthPage() {
                         whileTap={{ scale: 0.98 }}
                         onClick={() => setSelectedRole(role.id)}
                         className={cn(
-                          "w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-200 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm",
+                          "w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-200 bg-white",
                           selectedRole === role.id
-                            ? "border-primary bg-primary/5 shadow-md"
-                            : "border-border/70 hover:border-primary/50"
+                            ? "border-primary bg-orange-50/50 shadow-sm"
+                            : "border-slate-200 hover:border-slate-300"
                         )}
                       >
-                        <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center text-primary-foreground shadow-sm", role.gradient)}>
+                        <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-sm", role.gradient)}>
                           <Icon className="w-6 h-6" />
                         </div>
                         <div className="text-left">
-                          <p className="font-semibold">{role.label}</p>
-                          <p className="text-sm text-muted-foreground">{role.description}</p>
+                          <p className="font-semibold text-slate-900">{role.label}</p>
+                          <p className="text-sm text-slate-500">{role.description}</p>
                         </div>
                         {selectedRole === role.id && (
                           <motion.div
                             layoutId="roleCheck"
                             className="ml-auto w-6 h-6 rounded-full gradient-primary flex items-center justify-center shadow-sm"
                           >
-                            <div className="w-2 h-2 rounded-full bg-primary-foreground" />
+                            <div className="w-2 h-2 rounded-full bg-white" />
                           </motion.div>
                         )}
                       </motion.button>
@@ -251,7 +246,7 @@ export default function AuthPage() {
                   variant="gradient"
                   size="lg"
                   onClick={() => setMode('register')}
-                  className="w-full mt-6 shadow-lg shadow-orange-500/25"
+                  className="w-full mt-6 shadow-md shadow-orange-500/20"
                 >
                   Continue
                 </Button>
@@ -266,10 +261,10 @@ export default function AuthPage() {
                 className="space-y-6"
               >
                 <div className="text-center mb-6">
-                  <h2 className="text-xl font-bold">
+                  <h2 className="text-xl font-bold text-slate-900">
                     {mode === 'login' ? 'Welcome Back' : 'Create Account'}
                   </h2>
-                  <p className="text-muted-foreground text-sm mt-1">
+                  <p className="text-slate-500 text-sm mt-1">
                     {mode === 'login' 
                       ? 'Sign in to continue' 
                       : `Sign up as a ${selectedRole}`}
@@ -280,38 +275,38 @@ export default function AuthPage() {
                   {mode === 'register' && (
                     <>
                       <div className="relative">
-                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                         <Input
                           type="text"
                           placeholder="Full Name"
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value.slice(0, 100) })}
-                          className="pl-12 h-14 rounded-xl bg-white/70 dark:bg-slate-800/70 border-orange-100 dark:border-slate-700"
+                          className="pl-12 h-14 rounded-xl bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus-visible:ring-primary"
                           required
                           maxLength={100}
                         />
                       </div>
 
                       <div className="relative">
-                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                         <Input
                           type="tel"
                           placeholder="Phone Number"
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value.slice(0, 15) })}
-                          className="pl-12 h-14 rounded-xl bg-white/70 dark:bg-slate-800/70 border-orange-100 dark:border-slate-700"
+                          className="pl-12 h-14 rounded-xl bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus-visible:ring-primary"
                           required
                           maxLength={15}
                         />
                       </div>
 
                       <div className="relative">
-                        <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground z-10 pointer-events-none" />
+                        <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 z-10 pointer-events-none" />
                         <Select
                           value={formData.university}
                           onValueChange={(value) => setFormData({ ...formData, university: value })}
                         >
-                          <SelectTrigger className="pl-12 h-14 rounded-xl bg-white/70 dark:bg-slate-800/70 border-orange-100 dark:border-slate-700">
+                          <SelectTrigger className="pl-12 h-14 rounded-xl bg-white border-slate-200 text-slate-900">
                             <SelectValue placeholder="Select University" />
                           </SelectTrigger>
                           <SelectContent>
@@ -327,25 +322,25 @@ export default function AuthPage() {
                   )}
 
                   <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                     <Input
                       type="email"
                       placeholder="Email Address"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="pl-12 h-14 rounded-xl bg-white/70 dark:bg-slate-800/70 border-orange-100 dark:border-slate-700"
+                      className="pl-12 h-14 rounded-xl bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus-visible:ring-primary"
                       required
                     />
                   </div>
 
                   <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                     <Input
                       type="password"
                       placeholder="Password"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="pl-12 h-14 rounded-xl bg-white/70 dark:bg-slate-800/70 border-orange-100 dark:border-slate-700"
+                      className="pl-12 h-14 rounded-xl bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus-visible:ring-primary"
                       required
                       minLength={6}
                     />
@@ -353,7 +348,7 @@ export default function AuthPage() {
                 </div>
 
                 {mode === 'login' && (
-                  <button type="button" className="text-sm text-primary font-medium hover:underline">
+                  <button type="button" className="text-sm text-primary font-semibold hover:underline">
                     Forgot Password?
                   </button>
                 )}
@@ -363,12 +358,12 @@ export default function AuthPage() {
                   variant="gradient"
                   size="lg"
                   disabled={isLoading}
-                  className="w-full shadow-lg shadow-orange-500/25"
+                  className="w-full shadow-md shadow-orange-500/20"
                 >
                   {isLoading ? 'Please wait...' : mode === 'login' ? 'Sign In' : 'Create Account'}
                 </Button>
 
-                <p className="text-center text-sm text-muted-foreground">
+                <p className="text-center text-sm text-slate-600">
                   {mode === 'login' ? (
                     <>
                       Don't have an account?{' '}

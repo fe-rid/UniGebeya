@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Store, Bell, Shield, LogOut } from 'lucide-react';
+import { Loader2, Store, Bell, Shield, LogOut, Moon, Sun } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -19,6 +19,25 @@ export function SettingsManagement({ shop }: SettingsManagementProps) {
   const navigate = useNavigate();
   const { signOut } = useAuth();
 
+  const [isNightMode, setIsNightMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('theme');
+      if (saved) return saved === 'dark';
+      return document.documentElement.classList.contains('dark');
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (isNightMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isNightMode]);
+
   const toggleStatusMutation = useMutation({
     mutationFn: async (isOpen: boolean) => {
       const { error } = await supabase
@@ -32,7 +51,7 @@ export function SettingsManagement({ shop }: SettingsManagementProps) {
       queryClient.invalidateQueries({ queryKey: ['my-shop'] });
       toast.success(isOpen ? 'Shop is now open' : 'Shop is now closed');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error('Failed to update shop status: ' + error.message);
     }
   });
@@ -54,6 +73,32 @@ export function SettingsManagement({ shop }: SettingsManagementProps) {
       </div>
 
       <div className="grid gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Moon className="w-5 h-5 text-primary" />
+              Display & Appearance
+            </CardTitle>
+            <CardDescription>
+              Customize the visual theme of your shop manager dashboard.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between p-4 border rounded-lg bg-muted/30">
+              <div className="space-y-0.5">
+                <Label className="text-base">Night Mode</Label>
+                <p className="text-sm text-muted-foreground">
+                  Switch between light and dark theme for low-light environments.
+                </p>
+              </div>
+              <Switch
+                checked={isNightMode}
+                onCheckedChange={(checked) => setIsNightMode(checked)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

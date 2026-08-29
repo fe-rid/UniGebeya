@@ -53,6 +53,26 @@ export function ShopLayout({ children, activeSubpage }: ShopLayoutProps) {
   const queryClient = useQueryClient();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
+  // Night Mode state management
+  const [isNightMode, setIsNightMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('theme');
+      if (saved) return saved === 'dark';
+      return document.documentElement.classList.contains('dark');
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (isNightMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isNightMode]);
+
 
   // Fetch shop data
   const { data: shop, isLoading: shopLoading } = useQuery({
@@ -187,7 +207,25 @@ export function ShopLayout({ children, activeSubpage }: ShopLayoutProps) {
       </div>
 
       {/* Sidebar Footer */}
-      <div className="p-4 border-t border-border space-y-4 bg-muted/30">
+      <div className="p-4 border-t border-border space-y-3 bg-muted/30">
+        {/* Night Mode Switch */}
+        <div className="flex items-center justify-between p-3 rounded-2xl bg-card border border-border/60 shadow-sm">
+          <div className="flex items-center gap-2.5 min-w-0">
+            {isNightMode ? <Moon className="w-4 h-4 text-amber-400" /> : <Sun className="w-4 h-4 text-amber-500" />}
+            <div className="min-w-0">
+              <p className="text-xs text-muted-foreground font-medium">Night Mode</p>
+              <p className="text-sm font-bold truncate text-foreground">
+                {isNightMode ? 'Enabled' : 'Disabled'}
+              </p>
+            </div>
+          </div>
+          <Switch
+            checked={isNightMode}
+            onCheckedChange={(checked) => setIsNightMode(checked)}
+            className="data-[state=checked]:bg-primary"
+          />
+        </div>
+
         {/* Availability Switch */}
         {shop && (
           <div className="flex items-center justify-between p-3 rounded-2xl bg-card border border-border/60 shadow-sm">
@@ -271,6 +309,21 @@ export function ShopLayout({ children, activeSubpage }: ShopLayoutProps) {
                 {shop.is_open ? 'Accepting Orders' : 'Offline'}
               </span>
             )}
+
+            {/* Night Mode Theme Toggle */}
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full w-9 h-9 border-border relative"
+              onClick={() => setIsNightMode((prev) => !prev)}
+              title={isNightMode ? 'Switch to Light Mode' : 'Switch to Night Mode'}
+            >
+              {isNightMode ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-foreground" />
+              )}
+            </Button>
 
             {/* Notifications Trigger */}
             <Button
